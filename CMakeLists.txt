@@ -7,6 +7,9 @@ project(NeuralEngineLib VERSION 1.0.0 LANGUAGES C CXX )
 include(GNUInstallDirs)
 ###########22222222222222222##############
 
+###########44444444444444444##############
+option(BUILD_TESTS "Build tests" OFF)
+###########44444444444444444##############
 
 ###########1111111111111111##############
 option(NEURAL_ENGINE_USE_GPU "use gpu" OFF)
@@ -41,7 +44,12 @@ if (NEURAL_ENGINE_ENABLE_LOGGING)
 endif()
 ###########1111111111111111##############
 
-
+###########44444444444444444##############
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+###########44444444444444444##############
 
 ###########3333333333333333##############
 include(CMakePackageConfigHelpers)
