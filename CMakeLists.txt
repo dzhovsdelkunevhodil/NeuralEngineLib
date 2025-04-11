@@ -16,11 +16,11 @@ option(NEURAL_ENGINE_USE_GPU "use gpu" OFF)
 option(NEURAL_ENGINE_LOGGING "logging" OFF)
 
 add_library(Core INTERFACE)
-target_include_directories(Core INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/includes> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_include_directories(Core INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 add_library(NeuralEngineLib::Core ALIAS Core)
 
 add_library(Backend INTERFACE)
-target_include_directories(Backend INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/includes> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_include_directories(Backend INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_compile_features(Backend INTERFACE cxx_std_17)
 add_library(NeuralEngineLib::Backend ALIAS Backend)
 
@@ -35,7 +35,7 @@ else()
 endif()
 
 add_library(Utils INTERFACE)
-target_include_directories(Utils INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/includes> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_include_directories(Utils INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_compile_features(Utils INTERFACE cxx_std_17)
 add_library(NeuralEngineLib::Utils ALIAS Utils)
 
@@ -61,6 +61,15 @@ write_basic_package_version_file(
 ###########3333333333333333##############
 
 
+###########555555555555555##############
+add_subdirectory(src)
+#не уверен надо ли CMakeLists в src/
+#или надо было все в этот CMakeLists засунуть
+add_subdirectory(packaging)
+
+
+###########555555555555555##############
+
 
 ###########22222222222222222##############
 configure_package_config_file(
@@ -72,22 +81,27 @@ configure_package_config_file(
 install(
     TARGETS Core Backend Utils
     EXPORT ${PROJECT_NAME}_Targets
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    COMPONENT dev)
 
 install(
     EXPORT ${PROJECT_NAME}_Targets
     FILE ${PROJECT_NAME}Targets.cmake
     NAMESPACE ${PROJECT_NAME}::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+    COMPONENT dev)
 
 install(
-    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/includes/NeuralEngineLib"
+    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/NeuralEngineLib"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    COMPONENT dev
     FILES_MATCHING PATTERN "*.h")
 
 install(
     FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
     "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+    COMPONENT dev)
 
 ###########22222222222222222##############
+
