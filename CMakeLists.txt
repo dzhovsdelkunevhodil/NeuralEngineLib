@@ -96,12 +96,6 @@ install(
     COMPONENT dev
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-#export(
-#    EXPORT ${PROJECT_NAME}_Targets
-#    FILE "${PROJECT_NAME}Targets.cmake"
-#    NAMESPACE ${PROJECT_NAME}::
-#)
-
 install(
     EXPORT ${PROJECT_NAME}_Targets
     FILE ${PROJECT_NAME}Targets.cmake
@@ -116,7 +110,6 @@ install(
 install(
     FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
     "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-"${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} COMPONENT dev)
 
 
