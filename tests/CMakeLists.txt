@@ -7,13 +7,21 @@ FetchContent_Declare(googletest
 )
 #как я понял лучше
 #использовать URL вместо GIT_REPOSITORY
+if(WIN32)
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+endif()
 
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-include(NeuralEngineLibTestMacros)
+include(DefineComponentTestMacro)
+
+define_component_test_macro(Core)
+define_component_test_macro(Backend)
+define_component_test_macro(Utils)
+
+include("${CMAKE_BINARY_DIR}/GeneratedAddTestMacros.cmake")
 
 add_core_test(CoreTest core_test.cpp 10)
 add_backend_test(BackendTest backend_test.cpp 10)

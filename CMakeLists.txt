@@ -13,16 +13,18 @@ option(BUILD_TESTS "Build tests" OFF)
 
 ###########1111111111111111##############
 option(NEURAL_ENGINE_USE_GPU "use gpu" OFF)
-option(NEURAL_ENGINE_LOGGING "logging" OFF)
+option(NEURAL_ENGINE_ENABLE_LOGGING "logging" OFF)
 
-add_library(Core INTERFACE)
-target_include_directories(Core INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(AddComponentMacro)
+
+add_library(Core STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/core.cpp)
+target_include_directories(Core PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 add_library(NeuralEngineLib::Core ALIAS Core)
 
-add_library(Backend INTERFACE)
-target_include_directories(Backend INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_compile_features(Backend INTERFACE cxx_std_17)
-add_library(NeuralEngineLib::Backend ALIAS Backend)
+add_component(Backend)
 
 if (NEURAL_ENGINE_USE_GPU)
     target_compile_definitions(Backend INTERFACE NEURAL_ENGINE_USE_GPU=1)
@@ -34,10 +36,7 @@ else()
     endif()
 endif()
 
-add_library(Utils INTERFACE)
-target_include_directories(Utils INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_compile_features(Utils INTERFACE cxx_std_17)
-add_library(NeuralEngineLib::Utils ALIAS Utils)
+add_component(Utils)
 
 if (NEURAL_ENGINE_ENABLE_LOGGING)
     target_compile_definitions(Utils INTERFACE NEURAL_ENGINE_LOGGING=1)
@@ -62,9 +61,21 @@ write_basic_package_version_file(
 
 
 ###########555555555555555##############
-add_subdirectory(src)
-#не уверен надо ли CMakeLists в src/
-#или надо было все в этот CMakeLists засунуть
+
+include(FetchContent)
+FetchContent_Declare(boost_math
+    URL https://github.com/boostorg/math/archive/refs/tags/boost-1.87.0.zip
+)
+FetchContent_MakeAvailable(boost_math)
+add_library(Boost::math ALIAS boost_math)
+
+target_link_libraries(Core PRIVATE $<LINK_ONLY:Boost::math>)
+
+install(TARGETS Core
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT lib
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT lib
+    RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT lib)
+
 add_subdirectory(packaging)
 
 
