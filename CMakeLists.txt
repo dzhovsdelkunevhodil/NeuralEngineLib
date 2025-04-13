@@ -89,12 +89,18 @@ configure_package_config_file(
     "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
     INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
 )
-                            
+      
 install(
     TARGETS Backend Utils
     EXPORT ${PROJECT_NAME}_Targets
     COMPONENT dev
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+#export(
+#    EXPORT ${PROJECT_NAME}_Targets
+#    FILE "${PROJECT_NAME}Targets.cmake"
+#    NAMESPACE ${PROJECT_NAME}::
+#)
 
 install(
     EXPORT ${PROJECT_NAME}_Targets
@@ -110,7 +116,9 @@ install(
 install(
     FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
     "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+"${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} COMPONENT dev)
+
 
 ###########22222222222222222##############
 
